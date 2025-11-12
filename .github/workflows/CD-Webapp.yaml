@@ -1,17 +1,23 @@
-name: 'Deploy to Webapp'
+name: Deploy to Webapp
 
 on:
   workflow_run:
-    workflows: ["CI-ACR"]  # Replace with the name of your CI workflow
+    workflows: ["CI-ACR"]   # must exactly match the OTHER workflow's name
     types:
-      - completed  # Trigger only when the CI pipeline is completed
+      - completed
 
 jobs:
   deploy:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}  # Ensure the job runs only if CI succeeds
+    # This workflow only runs on workflow_run, so this reduces to "run if CI succeeded"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Deploy to Azure Web App
-    uses: azure/webapps-deploy@v2
-    with:
-        app-name: static-website-docker
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        images: ariel1devops1assigenment.azurecr.io/static-site:latest
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: static-website-docker
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ariel1devops1assigenment.azurecr.io/static-site:latest
