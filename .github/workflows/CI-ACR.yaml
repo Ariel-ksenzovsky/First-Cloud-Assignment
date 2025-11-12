@@ -53,8 +53,16 @@ jobs:
           docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest 
       
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: static-website-docker
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ariel1devops1assigenment.azurecr.io/static-site:latest
+        run: |
+          set -ex
+          az webapp config container set \
+            --resource-group cloud-assignment \
+            --name static-website-docker \
+            --docker-custom-image-name  ariel1devops1assigenment.azurecr.io/static-site:latest \
+            --docker-registry-server-url https://ariel1devops1assigenment.azurecr.io
+      
+      # uses: azure/webapps-deploy@v2
+        # with:
+        #   app-name: static-website-docker
+        #   publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        #   images: ariel1devops1assigenment.azurecr.io/static-site:latest
