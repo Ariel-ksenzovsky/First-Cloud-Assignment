@@ -8,9 +8,10 @@ on:
 
 jobs:
   deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}  # Ensure the job runs only if CI succeeds
     name: Deploy to Azure Web App
     uses: azure/webapps-deploy@v2
     with:
-        app-name: my-static-site-app
+        app-name: static-website-docker
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         images: ariel1devops1assigenment.azurecr.io/static-site:latest
