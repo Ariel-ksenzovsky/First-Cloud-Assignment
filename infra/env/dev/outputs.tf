@@ -12,6 +12,11 @@ output "sql_server_fqdn" {
   value       = azurerm_mssql_server.sql.fully_qualified_domain_name
 }
 
+output "sql_server_name" {
+  description = "Name of the Azure SQL logical server"
+  value       = azurerm_mssql_server.sql.name
+}
+
 output "sql_database_name" {
   description = "Azure SQL database name"
   value       = azurerm_mssql_database.appdb.name
@@ -21,3 +26,4 @@ output "sql_admin_login" {
   description = "SQL admin username (use with the password you set in code/tfvars)"
   value       = azurerm_mssql_server.sql.administrator_login
 }
+

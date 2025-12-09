@@ -4,10 +4,10 @@
 //////////////////////////////////////////////////////
 
 locals {
-  location       = "eastus2"
-  project_name   = "dev-cloud"
-  admin_username = "azureuser"
-  admin_password = "P@ssword123456789"  # TODO: move to tfvars/KeyVault in real use
+  location       = var.location
+  project_name   = var.project_name
+  admin_username = var.admin_username
+  admin_password = var.admin_password
 }
 
 ############################################
@@ -119,10 +119,11 @@ resource "azurerm_mssql_server" "sql" {
   # Azure SQL logical server "version" is always 12.0
   version = "12.0"
 
-  # SQL admin (server-level) credentials – DO NOT commit real ones to Git
-  administrator_login          = "sqladminuser"
-  administrator_login_password = "StrongSqlAdminPass123!"     # TODO: move to tfvars/KeyVault
+  # SQL admin (server-level) credentials
+  administrator_login          = var.administrator_login
+  administrator_login_password = var.administrator_login_password    
 
+  # SQL server settings
   minimum_tls_version           = "1.2"
   public_network_access_enabled = true
 }
