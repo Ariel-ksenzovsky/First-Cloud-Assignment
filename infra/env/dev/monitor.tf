@@ -13,6 +13,47 @@ resource "azurerm_monitor_action_group" "dev_alerts" {
 }
 
 # ==========================================
+# Memory monitor - Data Collection Rule
+# ==========================================
+# resource "azurerm_monitor_data_collection_rule" "vm_dcr" {
+#   name                = "${local.project_name}-dcr"
+#   resource_group_name = azurerm_resource_group.app.name
+#   location            = local.location
+
+#   data_flow {
+#     streams      = ["Microsoft-InsightsMetrics"]
+#     destinations = ["metrics"]
+#   }
+
+#   data_sources {
+#     performance_counter {
+#       name                = "perfCounters"
+#       streams             = ["Microsoft-InsightsMetrics"]
+#       counter_specifiers  = [
+#         "\\Memory\\Available MBytes",
+#         "\\Memory\\% Committed Bytes In Use"
+#       ]
+#       sampling_frequency_in_seconds = 15
+#     }
+#   }
+
+#   destinations {
+#     azure_monitor_metrics {
+#       name = "metrics"
+#     }
+#     }
+#   }
+
+# # ==========================================
+# # Data Collection Rule Association
+# # ==========================================
+# resource "azurerm_monitor_data_collection_rule_association" "vm_dca" {
+#   name                    = "${local.project_name}-dca"
+#   target_resource_id      = azurerm_linux_virtual_machine.web.id
+#   data_collection_rule_id = azurerm_monitor_data_collection_rule.vm_dcr.id
+# }
+
+# ==========================================
 # CPU alert: Average CPU > 80% for 5 minutes
 # ==========================================
 resource "azurerm_monitor_metric_alert" "web_cpu_high" {
@@ -41,20 +82,20 @@ resource "azurerm_monitor_metric_alert" "web_cpu_high" {
 }
 
 # =========================================================
-# Memory alert – DISABLED for now (no metric yet)
+# Memory alert – Average Memory > 80% for 5 minutes
 # =========================================================
-# resource "azurerm_monitor_metric_alert" "web_memory_high" {
-#   name                = "${local.project_name}-web-mem-high"
+# resource "azurerm_monitor_metric_alert" "vm_memory" {
+#   name                = "vm-memory-alert"
 #   resource_group_name = azurerm_resource_group.app.name
 #   scopes              = [azurerm_linux_virtual_machine.web.id]
-#
-#   description = "Memory usage on dev-cloud-web-vm is high"
-#   severity    = 3
+
+#   description = "Memory usage is above 80%"
+#   severity    = 2
 #   enabled     = true
-#
-#   frequency   = "PT1M"
+
 #   window_size = "PT5M"
-#
+#   frequency   = "PT1M"
+
 #   criteria {
 #     metric_namespace = "InsightsMetrics"
 #     metric_name      = "Memory\\Committed Bytes In Use"
@@ -62,7 +103,7 @@ resource "azurerm_monitor_metric_alert" "web_cpu_high" {
 #     operator         = "GreaterThan"
 #     threshold        = 80
 #   }
-#
+
 #   action {
 #     action_group_id = azurerm_monitor_action_group.dev_alerts.id
 #   }
